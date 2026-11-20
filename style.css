@@ -1,21 +1,57 @@
+/* =========================================================
+   TEMA NEON — versi responsif (mobile + desktop)
+   Nama class dipertahankan, jadi HTML/JS tidak perlu diubah.
+   ========================================================= */
+
+:root {
+    --bg: #090a14;
+    --panel: rgba(18, 21, 40, 0.92);
+    --cyan: #00f3ff;
+    --pink: #ff007f;
+    --gold: #ffbe0b;
+    --text: #e2e8f0;
+    --text-soft: #cbd5e1;
+    --text-mute: #94a3b8;
+    --line: rgba(148, 163, 184, 0.2);
+    --font-display: 'Orbitron', 'Segoe UI', sans-serif;
+    --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
+
+/* Hanya html & body yang full-screen.
+   (Sebelumnya button/input/select/textarea ikut width/height 100%,
+   itu yang membuat tombol bisa melar tidak wajar.) */
+
 html,
-body,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-text-size-adjust: 100%;
+}
+
 button,
 input,
 select,
 textarea {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: #090a14;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    touch-action: none;
+    font-family: inherit;
 }
 
 #renderCanvas {
@@ -23,72 +59,105 @@ textarea {
     height: 100%;
     display: block;
     outline: none;
+    touch-action: none;
 }
+
+
+/* ---------------------------------------------------------
+   HUD
+   --------------------------------------------------------- */
 
 #hud {
     position: absolute;
-    top: 20px;
-    left: 24px;
-    right: 24px;
+    top: calc(var(--safe-top) + clamp(10px, 2.5vh, 20px));
+    left: calc(var(--safe-left) + clamp(12px, 3vw, 24px));
+    right: calc(var(--safe-right) + clamp(12px, 3vw, 24px));
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 12px;
     z-index: 10;
     pointer-events: none;
 }
 
 .hud-left {
-    color: #00f3ff;
+    min-width: 0;
+    color: var(--cyan);
     text-shadow: 0 0 10px rgba(0, 243, 255, 0.7);
 }
 
 .score-box {
-    font-size: 1.75rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 4.5vw, 1.9rem);
     font-weight: 800;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
 }
 
 .highscore-box {
-    font-size: 0.95rem;
-    color: #ffbe0b;
-    margin-top: 2px;
+    font-size: clamp(0.75rem, 2.6vw, 0.95rem);
+    color: var(--gold);
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
 }
 
 .hud-right {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     gap: 8px;
     pointer-events: auto;
 }
 
 .hud-btn {
     background: rgba(18, 21, 40, 0.85);
-    color: #e2e8f0;
+    color: var(--text);
     border: 1px solid rgba(0, 243, 255, 0.5);
-    padding: 8px 30px;
-    border-radius: 6px;
-    font-size: 0.75rem;
+    min-height: 40px;
+    padding: 8px clamp(12px, 3vw, 22px);
+    border-radius: 8px;
+    font-size: clamp(0.7rem, 2.4vw, 0.8rem);
     font-weight: 700;
+    letter-spacing: 0.02em;
     cursor: pointer;
     white-space: nowrap;
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.1s;
 }
 
 .hud-btn:hover {
-    border-color: #00f3ff;
-    color: #00f3ff;
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 12px rgba(0, 243, 255, 0.35);
 }
+
+.hud-btn:active {
+    transform: scale(0.96);
+}
+
+
+/* ---------------------------------------------------------
+   OVERLAY
+   --------------------------------------------------------- */
 
 .overlay {
     position: absolute;
     inset: 0;
+    padding: calc(var(--safe-top) + 12px) calc(var(--safe-right) + 12px) calc(var(--safe-bottom) + 12px) calc(var(--safe-left) + 12px);
     background: rgba(9, 10, 20, 0.72);
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 20;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
 }
 
 .overlay.menu-overlay {
     background: rgba(9, 10, 20, 0.35);
+    -webkit-backdrop-filter: none;
     backdrop-filter: none;
 }
 
@@ -96,68 +165,87 @@ textarea {
     display: none;
 }
 
+
+/* ---------------------------------------------------------
+   KARTU MENU & MODAL
+   --------------------------------------------------------- */
+
 .menu-card,
 .modal {
-    background: rgba(18, 21, 40, 0.92);
-    border: 2px solid #00f3ff;
+    background: var(--panel);
+    border: 2px solid var(--cyan);
     box-shadow: 0 0 28px rgba(0, 243, 255, 0.25);
-    padding: 36px 44px;
-    border-radius: 14px;
+    padding: clamp(22px, 5vw, 36px) clamp(20px, 5vw, 44px);
+    border-radius: 16px;
     text-align: center;
     color: #fff;
+    width: 100%;
     max-width: 440px;
-    width: 90%;
+    margin: auto;
+    /* tetap aman saat konten lebih tinggi dari layar */
 }
 
 .modal {
-    border-color: #ff007f;
+    border-color: var(--pink);
     box-shadow: 0 0 25px rgba(255, 0, 127, 0.35);
 }
 
 .menu-card h1,
-.modal-h2,
-.score-box {
-    font-size: 2.3rem;
-    color: #00f3ff;
+.modal-h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 7vw, 2.3rem);
+    line-height: 1.15;
+    color: var(--cyan);
     text-shadow: 0 0 14px rgba(0, 243, 255, 0.6);
     margin-bottom: 6px;
-    font-family: 'Orbitron', sans-serif;
+    overflow-wrap: anywhere;
 }
 
 .subtitle {
-    color: #94a3b8;
-    font-size: 0.95rem;
-    margin-bottom: 24px;
+    color: var(--text-mute);
+    font-size: clamp(0.82rem, 2.8vw, 0.95rem);
+    line-height: 1.5;
+    margin-bottom: 22px;
 }
 
 .modal h2 {
-    font-size: 2.1rem;
-    color: #ff007f;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 6vw, 2.1rem);
+    color: var(--pink);
+    text-shadow: 0 0 14px rgba(255, 0, 127, 0.5);
     margin-bottom: 12px;
 }
 
 .modal p {
-    font-size: 1.25rem;
-    margin-bottom: 24px;
-    color: #e2e8f0;
+    font-size: clamp(1rem, 3.6vw, 1.25rem);
+    margin-bottom: 22px;
+    color: var(--text);
 }
+
+
+/* ---------------------------------------------------------
+   TOMBOL
+   --------------------------------------------------------- */
 
 .primary-btn,
 .secondary-btn {
+    display: block;
     width: 100%;
+    min-height: 48px;
+    /* target sentuh nyaman di mobile */
     border: none;
-    padding: 13px 24px;
+    padding: 12px 24px;
     font-size: 1rem;
     font-weight: 800;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.2s;
+    transition: transform 0.1s, box-shadow 0.2s, border-color 0.2s, color 0.2s;
     margin-bottom: 10px;
 }
 
 .primary-btn {
-    background: #00f3ff;
-    color: #090a14;
+    background: var(--cyan);
+    color: var(--bg);
 }
 
 .primary-btn:hover {
@@ -165,41 +253,79 @@ textarea {
     box-shadow: 0 0 16px rgba(0, 243, 255, 0.8);
 }
 
+.primary-btn:active,
+.secondary-btn:active {
+    transform: scale(0.97);
+}
+
 .secondary-btn {
     background: transparent;
-    color: #cbd5e1;
+    color: var(--text-soft);
     border: 1px solid #475569;
     margin-bottom: 0;
 }
 
 .secondary-btn:hover {
-    border-color: #94a3b8;
+    border-color: var(--text-mute);
     color: #fff;
 }
+
+.primary-btn:focus-visible,
+.secondary-btn:focus-visible,
+.hud-btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+}
+
+
+/* ---------------------------------------------------------
+   PANDUAN KONTROL
+   --------------------------------------------------------- */
 
 .controls-guide {
     margin-top: 18px;
     padding-top: 16px;
-    border-top: 1px solid rgba(148, 163, 184, 0.2);
+    border-top: 1px solid var(--line);
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    font-size: 0.8rem;
-    color: #cbd5e1;
+    gap: 8px 14px;
+    font-size: clamp(0.72rem, 2.4vw, 0.8rem);
+    line-height: 1.4;
+    color: var(--text-soft);
     text-align: left;
 }
 
+
+/* ---------------------------------------------------------
+   PANEL ABOUT
+   --------------------------------------------------------- */
+
 .about-card {
-    max-width: 500px;
-    max-height: 88vh;
+    max-width: 520px;
+    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px);
     overflow-y: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
     text-align: left;
-    padding: 28px 32px;
+    padding: clamp(20px, 4.5vw, 30px) clamp(18px, 4.5vw, 34px);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 243, 255, 0.5) transparent;
+}
+
+.about-card::-webkit-scrollbar {
+    width: 6px;
+}
+
+.about-card::-webkit-scrollbar-thumb {
+    background: rgba(0, 243, 255, 0.5);
+    border-radius: 3px;
 }
 
 .about-card h2 {
-    font-size: 1.6rem;
-    color: #00f3ff;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 5vw, 1.6rem);
+    color: var(--cyan);
+    text-shadow: 0 0 12px rgba(0, 243, 255, 0.5);
     margin-bottom: 4px;
     text-align: center;
 }
@@ -215,23 +341,29 @@ textarea {
     border-bottom: 1px solid rgba(148, 163, 184, 0.18);
 }
 
+.about-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 12px;
+    padding-bottom: 0;
+}
+
 .about-section h3 {
     font-size: 0.95rem;
-    color: #ffbe0b;
+    color: var(--gold);
     margin-bottom: 6px;
 }
 
 .about-section p {
-    font-size: 0.88rem;
-    line-height: 1.55;
-    color: #cbd5e1;
+    font-size: clamp(0.82rem, 2.8vw, 0.9rem);
+    line-height: 1.6;
+    color: var(--text-soft);
 }
 
 .about-list {
     padding-left: 18px;
-    font-size: 0.86rem;
-    line-height: 1.55;
-    color: #cbd5e1;
+    font-size: clamp(0.8rem, 2.7vw, 0.88rem);
+    line-height: 1.6;
+    color: var(--text-soft);
 }
 
 .about-list li {
@@ -241,5 +373,79 @@ textarea {
 .meta-info {
     margin-top: 8px;
     font-size: 0.78rem;
-    color: #94a3b8;
+    color: var(--text-mute);
+}
+
+
+/* ---------------------------------------------------------
+   RESPONSIF
+   --------------------------------------------------------- */
+
+
+/* Layar kecil (HP potret) */
+
+@media (max-width: 480px) {
+    .hud-btn {
+        min-height: 36px;
+        padding: 6px 12px;
+    }
+    .controls-guide {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* HP posisi landscape: tinggi layar sempit, rapatkan semuanya */
+
+@media (max-height: 480px) and (orientation: landscape) {
+    .menu-card,
+    .modal {
+        padding: 16px 24px;
+        max-width: 520px;
+    }
+    .menu-card h1,
+    .modal-h2 {
+        font-size: 1.5rem;
+    }
+    .subtitle {
+        margin-bottom: 12px;
+        font-size: 0.8rem;
+    }
+    .primary-btn,
+    .secondary-btn {
+        min-height: 40px;
+        padding: 8px 20px;
+        font-size: 0.9rem;
+    }
+    .controls-guide {
+        margin-top: 12px;
+        padding-top: 10px;
+        grid-template-columns: 1fr 1fr;
+        font-size: 0.72rem;
+    }
+    .about-card {
+        padding: 14px 20px;
+    }
+}
+
+
+/* Layar besar / desktop */
+
+@media (min-width: 1024px) {
+    .menu-card,
+    .modal {
+        max-width: 480px;
+    }
+    .about-card {
+        max-width: 560px;
+    }
+}
+
+
+/* Hormati pengguna yang mematikan animasi */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
 }
