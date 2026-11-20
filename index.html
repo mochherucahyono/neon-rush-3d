@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/neon-rush-3d/assets/icons-CdxmrZ19.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Neon Rush 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script type="module" crossorigin src="/neon-rush-3d/assets/index-CVIcUq_W.js"></script>
+  <link rel="stylesheet" crossorigin href="/neon-rush-3d/assets/index-D2C4pzzY.css">
+</head>
+
+<body>
+    <div id="hud" class="hidden">
+        <div class="hud-left">
+            <div class="score-box">SKOR: <span id="scoreValue">0</span></div>
+            <div class="highscore-box">TERBAIK: <span id="highScoreValue">0</span></div>
+        </div>
+        <div class="hud-right">
+            <button id="muteBtn" class="hud-btn">SUARA: ON</button>
+            <button id="pauseBtn" class="hud-btn">JEDA (P)</button>
+        </div>
+    </div>
+
+    <div id="mainMenuScreen" class="overlay menu-overlay">
+        <div class="menu-card">
+            <h1>NEON RUSH 3D</h1>
+            <p class="subtitle">Refleks cepat di lintasan neon 3 jalur</p>
+            <button id="playBtn" class="primary-btn">MULAI MAIN</button>
+            <button id="aboutBtn" class="secondary-btn">TENTANG GAME</button>
+            <div class="controls-guide">
+                <span>A/D atau Panah: Pindah Jalur</span>
+                <span>W/Spasi: Lompat</span>
+                <span>S/Bawah: Slide / Cepat Turun</span>
+                <span>P/Esc: Jeda</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="pauseScreen" class="overlay hidden">
+        <div class="modal">
+            <h2>GAME DIJEDA</h2>
+            <button id="resumeBtn" class="primary-btn">LANJUTKAN</button>
+            <button id="menuRestartBtn" class="secondary-btn">ULANG DARI AWAL</button>
+        </div>
+    </div>
+
+    <div id="gameOverScreen" class="overlay hidden">
+        <div class="modal">
+            <h2>GAME OVER</h2>
+            <p>Skor Akhir: <span id="finalScore">0</span></p>
+            <button id="restartBtn" class="primary-btn">MAIN LAGI (SPASI)</button>
+        </div>
+    </div>
+
+    <div id="aboutScreen" class="overlay hidden">
+        <div class="menu-card about-card">
+            <h2>TENTANG GAME</h2>
+            <p class="subtitle">Neon Rush 3D — WebGL Endless Runner</p>
+
+            <div class="about-section">
+                <h3>Cara Bermain</h3>
+                <p>
+                    Bertahanlah sejauh mungkin di lintasan 3 jalur berkecepatan tinggi. Hindari rintangan merah dan kumpulkan koin emas untuk memperbesar skor.
+                </p>
+            </div>
+
+            <div class="about-section">
+                <h3>Jenis Rintangan</h3>
+                <ul class="about-list">
+                    <li><strong>Blok Rendah:</strong> Lompati (W / Spasi / Swipe Atas) atau pindah jalur.</li>
+                    <li><strong>Palang Tinggi:</strong> Menunduk/slide (S / Panah Bawah / Swipe Bawah) atau pindah jalur.</li>
+                    <li><strong>Blok Penuh:</strong> Wajib pindah jalur (A/D / Panah Kiri-Kanan / Swipe Kiri-Kanan).</li>
+                </ul>
+            </div>
+
+            <div class="about-section">
+                <h3>Sistem Skor & Info</h3>
+                <p>
+                    Skor dihitung dari jarak tempuh ditambah <strong>+10 poin</strong> per koin. Skor terbaik tersimpan otomatis di browser (<code>localStorage</code>).
+                </p>
+                <p class="meta-info">Versi 1.0</p>
+                <p class="meta-info">Dibuat oleh Heru Cahyono dengan senang hati.</p>
+            </div>
+
+            <button id="closeAboutBtn" class="primary-btn">KEMBALI KE MENU</button>
+        </div>
+    </div>
+
+    <canvas id="renderCanvas"></canvas>
+</body>
+
+</html>

@@ -1,0 +1,20 @@
+# Dependensi & hasil build
+node_modules/
+dist/
+dist-ssr/
+
+# File log & cache lokal
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.vite/
+.cache/
+
+# File sistem operasi & editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
